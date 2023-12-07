@@ -1,0 +1,39 @@
+name: jib build example
+
+env:
+  JIB_CONTAINER_PROFILE: docker
+
+on:
+  push:
+    branches:
+      - hello
+  pull_request:
+    branches:
+      - hello
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: JDK 17 Setting
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.17
+
+      #      - name: Set Environment Variable
+      #        run: |
+      #          echo "::set-env name=HELLO_MSG::${{ secrets.HELLO_MSG }}"
+
+      - name: Permission Setting
+        run: chmod +x gradlew
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2.1.0
+        with:
+          username: ${{ secrets.DOCKER_HUB_ID }}
+          password: ${{ secrets.DOCKER_HUB_PW }}
+
+      - name: jib build
+        run: ./gradlew jib
