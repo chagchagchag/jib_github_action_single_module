@@ -1,0 +1,29 @@
+name: jib build example
+
+env:
+  JIB_CONTAINER_PROFILE: docker
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: JDK 17 Setting
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.17
+
+      - name: Permission Setting
+        run: chmod +x gradlew
+
+      - name: jib build
+        run: ./gradlew jib

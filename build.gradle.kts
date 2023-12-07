@@ -38,7 +38,7 @@ tasks.withType<Test> {
 }
 
 jib{
-	val profile : String = System.getenv("COMPOSE_SPRING_PROFILES_ACTIVE") as? String ?: "local"
+	val profile : String = System.getenv("JIB_CONTAINER_PROFILE") as? String ?: "local"
 
 	from {
 		image = "amazoncorretto:17"
@@ -61,12 +61,16 @@ jib{
 	container{
 		creationTime = "USE_CURRENT_TIMESTAMP"
 
+		environment = mapOf(
+			"JIB_CONTAINER_PROFILE" to System.getenv("JIB_CONTAINER_PROFILE"),
+		)
+
 		// jvm 옵션
 		jvmFlags = listOf(
 			"-Dspring.profiles.active=${profile}",
 			"-XX:+UseContainerSupport",
-            "-XX:+UseG1GC",
-            "-verbose:gc",
+			"-XX:+UseG1GC",
+			"-verbose:gc",
 //            "-XX:+PrintGCDetails",
 			"-Dserver.port=8080",
 			"-Dfile.encoding=UTF-8",
